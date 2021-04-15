@@ -30,11 +30,13 @@ module.exports = function (RED) {
                             receiver.on('errorReceived', function (err) {
                                 errorReceived = true;
                                 node.status({ fill: "yellow", shape: "ring", text: "error received, see debug or output" });
+                                node.log('Error: '+err.message);
                                 node.error(err.message);
                             });
 
                             receiver.on('message', function (receivedMessage) {
                                 // message received from Event Hub partition
+                                node.log('message received from Event Hub partition');
                                 var msg = { payload: receivedMessage.body }
                                 node.send(msg);
                             });
@@ -43,6 +45,7 @@ module.exports = function (RED) {
                 })
                 .catch(function (err) {
                     node.status({ fill: "red", shape: "ring", text: "unexpected error: " + err.message });
+                    node.log('Error: '+err.message);
                     node.error(err.message);
                 });
 
@@ -56,6 +59,7 @@ module.exports = function (RED) {
         }
         catch (err) {
             this.error(err.message);
+            node.log('Error: '+err.message);
             node.status({ fill: "red", shape: "ring", text: "can't connect, " + err.message });
         }
     }
